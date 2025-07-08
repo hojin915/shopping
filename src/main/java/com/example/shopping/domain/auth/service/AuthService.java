@@ -1,5 +1,6 @@
 package com.example.shopping.domain.auth.service;
 
+import com.example.shopping.config.JwtUtil;
 import com.example.shopping.config.PasswordEncoder;
 import com.example.shopping.domain.auth.dto.request.LoginRequestDto;
 import com.example.shopping.domain.auth.dto.request.SignupRequestDto;
@@ -20,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
+    private final JwtUtil jwtUtil;
     // 예외처리 수정
     @Transactional
     public SignupResponseDto signup(@Valid SignupRequestDto request) {
@@ -65,13 +66,14 @@ public class AuthService {
             throw new RuntimeException("Wrong password");
         }
 
-        //String token = jwtUtil.createToken(user.getId(), user.getEmail(), user.getName(), user.getUserRole());
+        String token = jwtUtil.createToken(user.getId(), user.getEmail(), user.getUserRole());
 
-        return new LoginResponseDto(user.getId(), user.getEmail(), "temp");
+        return new LoginResponseDto(user.getId(), user.getEmail(), token);
     }
 
 
     // 리프레시 토큰 이용한 구현 예정
     public void logout(User user) {
+        System.out.println(user.getId());
     }
 }
